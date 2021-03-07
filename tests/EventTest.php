@@ -18,12 +18,23 @@ class EventTest extends WebTestCase
         $client->request("GET", "");
         // echo $client->getResponse();
         $this->assertTrue($client->getResponse()->isSuccessful());
+
+        $client->request("GET", "/");
+        $this->assertTrue($client->getResponse()->isSuccessful());
     }
 
-    public function testGetEventHome()
+    public function testViewEvent()
     {
         $client = static::createClient();
         $client->request("GET", "/event");
+        // echo $client->getResponse();
+        $this->assertTrue($client->getResponse()->isSuccessful());
+    }
+
+    public function testViewEventsList()
+    {
+        $client = static::createClient();
+        $client->request("GET", "/events");
         // echo $client->getResponse();
         $this->assertTrue($client->getResponse()->isSuccessful());
     }

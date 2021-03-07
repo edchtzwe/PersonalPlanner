@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class EventController extends AbstractController
 {
     // see app/config/routes.yaml
-    public function index(): Response
+    public function indexAction(): Response
     {
         return $this->render('event/index.html.twig', [
             'controller_name' => 'EventController',
@@ -20,22 +20,22 @@ class EventController extends AbstractController
     /**
      * @Route("/event/{id}", name="view_event", requirements={"id" = "\d+"})
      */
-    public function viewEvent($id = 0): Response
+    public function viewEventAction($id = 0): Response
     {
         // this method will do a find by $id, the pass in the appropriate params to the twig template
         return $this->render('event/view_event.html.twig', [
-            'controller_name' => 'id',
+            'controller_name' => 'UNDER CONSTRUCTION',
         ]);
     }
 
     /**
      * @Route("/events/{page}", name="view_events", requirements={"page" = "\d+"})
      */
-    public function viewEventList($page = 1): Response
+    public function viewEventListAction($page = 1): Response
     {
         // this method will do a find by $id, the pass in the appropriate params to the twig template
         return $this->render('event/view_events.html.twig', [
-            'controller_name' => 'id',
+            'controller_name' => 'UNDER CONSTRUCTION',
         ]);
     }
 }

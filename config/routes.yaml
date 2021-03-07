@@ -7,4 +7,4 @@
 
 home:
     path:   /
-    defaults:  { _controller: 'App\Controller\EventController::index' }
+    defaults:  { _controller: 'App\Controller\EventController::indexAction' }
