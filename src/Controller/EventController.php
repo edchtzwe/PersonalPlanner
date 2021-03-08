@@ -7,8 +7,39 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use App\Entity\Event;
+use Doctrine\ORM\EntityManagerInterface;
+
+use DateInterval;
+
 class EventController extends AbstractController
 {
+    public function createAction()
+    {
+        // equivalent to adding an argument to this action like createAction(EntityManagerInterface $entityManager)
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $event = new Event();
+        $event->setTitle("Title");
+        $event->setDescription("Description Description");
+        $event->setLocation("Location Location");
+        $event->setPriority("**********");
+        $event->setStartTime(new \DateTime('@'.strtotime('now')));
+        $endDateTime = new \DateTime('@'.strtotime('now'));
+        // period 10 days
+        $endDateTime->add(new DateInterval('P10D'));
+        $event->setEndTime($endDateTime);
+
+        // tells Doctrine you want to eventually save the product (no queries yet)
+        $entityManager->persist($event);
+
+        // actually executes the queries
+        $entityManager->flush();
+
+        // we will wanna redirect to the view page after the add
+        return new Response("Event saved with ID : ".$event->getId());
+    }
+
     // see app/config/routes.yaml
     public function indexAction(): Response
     {
@@ -31,11 +62,27 @@ class EventController extends AbstractController
     /**
      * @Route("/events/{page}", name="view_events", requirements={"page" = "\d+"})
      */
-    public function viewEventListAction($page = 1): Response
+    public function viewEventsListAction($page = 1): Response
     {
         // this method will do a find by $id, the pass in the appropriate params to the twig template
         return $this->render('event/view_events.html.twig', [
             'controller_name' => 'UNDER CONSTRUCTION',
         ]);
+    }
+
+    public function editEventAction($id): Response
+    {
+        $record = false;
+        if (!$record || !$id) {
+            throw $this->createNotFoundException("Record not found");
+        }
+
+        return $this->redirectToRoute("/event/"+$id);
+    }
+
+    public function eventAsJsonAction($id): Response
+    {
+        $record = false;
+        return $this->json(["key" => "value"]);
     }
 }
