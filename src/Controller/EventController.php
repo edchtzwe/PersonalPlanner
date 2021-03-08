@@ -14,7 +14,7 @@ use DateInterval;
 
 class EventController extends AbstractController
 {
-    public function createAction()
+    public function createAction(): Response
     {
         // equivalent to adding an argument to this action like createAction(EntityManagerInterface $entityManager)
         $entityManager = $this->getDoctrine()->getManager();
@@ -38,6 +38,11 @@ class EventController extends AbstractController
 
         // we will wanna redirect to the view page after the add
         return new Response("Event saved with ID : ".$event->getId());
+    }
+
+    public function readAction(): Response
+    {
+        return true;
     }
 
     // see app/config/routes.yaml

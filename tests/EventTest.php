@@ -7,11 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class EventTest extends WebTestCase
 {
-    public function testSomething(): void
-    {
-        $this->assertTrue(true);
-    }
-
     public function testHome()
     {
         $client = static::createClient();
@@ -36,6 +31,15 @@ class EventTest extends WebTestCase
         $client = static::createClient();
         $client->request("GET", "/events");
         // echo $client->getResponse();
+        $this->assertTrue($client->getResponse()->isSuccessful());
+    }
+
+    public function testEventCRUD()
+    {
+        $client = static::createClient();
+
+        // test create
+        $client->request("GET", "/event/create_event");
         $this->assertTrue($client->getResponse()->isSuccessful());
     }
 }
