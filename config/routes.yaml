@@ -12,6 +12,8 @@ home:
 edit:
     path:   /event/edit/{id}
     defaults:  { _controller: 'App\Controller\EventController::indexAction' }
+    requirements:
+        id: '\d+'
 
 create_event:
     path:   /event/create_event

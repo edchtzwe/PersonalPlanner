@@ -14,6 +14,20 @@ use DateInterval;
 
 class EventController extends AbstractController
 {
+    public function getRepository()
+    {
+        return $this->getDoctrine()
+            ->getRepository(Event::class);
+    }
+
+    public function findOrError($event)
+    {
+        if (!$event) {
+            throw $this->createNotFoundException("Coudln't find Event with id : ".$eventId);
+        }
+        return true;
+    }
+
     public function createAction(): Response
     {
         // equivalent to adding an argument to this action like createAction(EntityManagerInterface $entityManager)
@@ -40,9 +54,44 @@ class EventController extends AbstractController
         return new Response("Event saved with ID : ".$event->getId());
     }
 
-    public function readAction(): Response
+    public function readAction($eventId)
     {
-        return true;
+        $repository = $this->getRepository();
+        $event = $repository->find($eventId);
+
+        if ($this->findOrError($event)) {
+            return new Response("Event with title : ".$event->getTitle()." found.");
+        }
+        return $event;
+    }
+
+    public function getAllAction()
+    {
+        $repository = $this->getRepository();
+        $allEvents = $repository->findAll();
+    }
+
+    public function updateAction($eventId)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $event = $this->readAction($eventId);
+
+        if ($this->findOrError($event)) {
+            return new Response("Event with title : ".$event->getTitle()." found.");
+        }
+
+        $event->setTitle("Updated Title");
+        $entityManager->flush();
+
+        return $this->redirectToRoute("/");
+    }
+
+    public function deleteAction($eventId)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $event = $this->readAction($eventId);
+        $entityManager->remove($event);
+        $entityManager->flush();
     }
 
     // see app/config/routes.yaml
