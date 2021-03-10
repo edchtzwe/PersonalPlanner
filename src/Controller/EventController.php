@@ -4,10 +4,13 @@ namespace App\Controller;
 
 // Controller is deprecated in 4.1, AbstractController is the way to go, so let's future proof ourselves
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\Event;
+use App\Form\EventType;
+
 use Doctrine\ORM\EntityManagerInterface;
 
 use DateInterval;
@@ -99,6 +102,19 @@ class EventController extends AbstractController
     {
         return $this->render('event/index.html.twig', [
             'controller_name' => 'EventController',
+        ]);
+    }
+
+    /**
+    * @Route("/event/add_event", name="add_event")
+    */
+    public function createNewEventAction(Request $request)
+    {
+        $event = new Event();
+        $form = $this->createForm(EventType::class, $event);
+
+        return $this->render("event/add_event.html.twig", [
+            "form" => $form->createView(),
         ]);
     }
 

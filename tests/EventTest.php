@@ -42,4 +42,12 @@ class EventTest extends WebTestCase
         $client->request("GET", "/event/create_event");
         $this->assertTrue($client->getResponse()->isSuccessful());
     }
+
+    public function testAddNewEvent()
+    {
+        $client = static::createClient();
+
+        $client->request("GET", "/event/add_event");
+        $this->assertTrue($client->getResponse()->isSuccessful());
+    }
 }
