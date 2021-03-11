@@ -31,11 +31,12 @@ class EventController extends AbstractController
         return true;
     }
 
-    public function createAction(): Response
+    public function createAction($event)
     {
         // equivalent to adding an argument to this action like createAction(EntityManagerInterface $entityManager)
         $entityManager = $this->getDoctrine()->getManager();
 
+        /*
         $event = new Event();
         $event->setTitle("Title");
         $event->setDescription("Description Description");
@@ -46,6 +47,7 @@ class EventController extends AbstractController
         // period 10 days
         $endDateTime->add(new DateInterval('P10D'));
         $event->setEndTime($endDateTime);
+        */
 
         // tells Doctrine you want to eventually save the product (no queries yet)
         $entityManager->persist($event);
@@ -53,8 +55,7 @@ class EventController extends AbstractController
         // actually executes the queries
         $entityManager->flush();
 
-        // we will wanna redirect to the view page after the add
-        return new Response("Event saved with ID : ".$event->getId());
+        return $event;
     }
 
     public function readAction($eventId)
@@ -112,6 +113,16 @@ class EventController extends AbstractController
     {
         $event = new Event();
         $form = $this->createForm(EventType::class, $event);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // this line is not really needed as the form auto-updates the entity object
+            $event = $form->getData();
+
+            $newEvent = $this->createAction($event);
+            return $this->redirectToRoute("view_event", array("id" => $newEvent->getId()));
+        }
 
         return $this->render("event/add_event.html.twig", [
             "form" => $form->createView(),
