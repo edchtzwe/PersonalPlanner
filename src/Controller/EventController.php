@@ -23,6 +23,20 @@ class EventController extends AbstractController
             ->getRepository(Event::class);
     }
 
+    public function castEventObjToArray($event)
+    {
+        $eventObjArr = array(
+            "Title" => $event->getTitle(),
+            "Description" => $event->getDescription(),
+            "Start" => $event->getStartTime()->format('Y-m-d'),
+            "End" => $event->getEndTime()->format('Y-m-d'),
+            "Location" => $event->getLocation(),
+            "Priority" => $event->getPriority(),
+        );
+        return $eventObjArr;
+    }
+
+
     public function findOrError($event)
     {
         if (!$event) {
@@ -31,6 +45,7 @@ class EventController extends AbstractController
         return true;
     }
 
+    // Create
     public function createAction($event)
     {
         // equivalent to adding an argument to this action like createAction(EntityManagerInterface $entityManager)
@@ -58,14 +73,12 @@ class EventController extends AbstractController
         return $event;
     }
 
+    // Read
     public function readAction($eventId)
     {
         $repository = $this->getRepository();
         $event = $repository->find($eventId);
 
-        if ($this->findOrError($event)) {
-            return new Response("Event with title : ".$event->getTitle()." found.");
-        }
         return $event;
     }
 
@@ -75,6 +88,7 @@ class EventController extends AbstractController
         $allEvents = $repository->findAll();
     }
 
+    // Update
     public function updateAction($eventId)
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -90,6 +104,7 @@ class EventController extends AbstractController
         return $this->redirectToRoute("/");
     }
 
+    // Delete
     public function deleteAction($eventId)
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -132,11 +147,12 @@ class EventController extends AbstractController
     /**
      * @Route("/event/{id}", name="view_event", requirements={"id" = "\d+"})
      */
-    public function viewEventAction($id = 0): Response
+    public function viewEventAction($id)
     {
-        // this method will do a find by $id, the pass in the appropriate params to the twig template
+        $event = $this->readAction($id);
+        $eventObjArr = $this->castEventObjToArray($event);
         return $this->render('event/view_event.html.twig', [
-            'controller_name' => 'UNDER CONSTRUCTION',
+            'event' => $eventObjArr,
         ]);
     }
 
