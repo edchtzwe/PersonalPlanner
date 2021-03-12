@@ -36,13 +36,17 @@ class EventTest extends WebTestCase
         $client = static::createClient();
         $client->followRedirects();
 
+        // get the client
         $crawler = $client->request("GET", "/event/add_event");
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
+        // test create event
         $ccObj = $this->createEventHelper($client, $crawler);
         $client = $ccObj["CLIENT"];
         $crawler = $ccObj["CRAWLER"];
         $this->assertStringContainsString("Unit Test title", $client->getResponse()->getContent());
+
+        // test edit event
     }
 
     public function createEventHelper($client, $crawler)
@@ -62,5 +66,13 @@ class EventTest extends WebTestCase
         $crawler = $client->submit($form);
 
         return array("CLIENT" => $client, "CRAWLER" => $crawler);
+    }
+
+    public function testViewEvent()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request("GET", "/event/21");
+        $this->assertTrue($client->getResponse()->isSuccessful());
     }
 }
