@@ -23,14 +23,6 @@ class EventTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isSuccessful());
     }
 
-    public function testViewEvent()
-    {
-        $client = static::createClient();
-        $client->request("GET", "/event");
-        // echo $client->getResponse();
-        $this->assertTrue($client->getResponse()->isSuccessful());
-    }
-
     public function testViewEventsList()
     {
         $client = static::createClient();
@@ -39,7 +31,7 @@ class EventTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isSuccessful());
     }
 
-    public function testAddNewEvent()
+    public function testEventCRUD()
     {
         $client = static::createClient();
         $client->followRedirects();
@@ -47,6 +39,14 @@ class EventTest extends WebTestCase
         $crawler = $client->request("GET", "/event/add_event");
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
+        $ccObj = $this->createEventHelper($client, $crawler);
+        $client = $ccObj["CLIENT"];
+        $crawler = $ccObj["CRAWLER"];
+        $this->assertStringContainsString("Unit Test title", $client->getResponse()->getContent());
+    }
+
+    public function createEventHelper($client, $crawler)
+    {
         $form = $crawler->selectButton("Submit")->form();
 
         $form["event[title]"]->setValue("Unit Test title");
@@ -60,6 +60,7 @@ class EventTest extends WebTestCase
         $form["event[end_time]"]->setValue($endDateTime->format('Y-m-d'));
 
         $crawler = $client->submit($form);
-        $this->assertContains("UNDER CONSTRUCTION", $client->getResponse()->getContent());
+
+        return array("CLIENT" => $client, "CRAWLER" => $crawler);
     }
 }
