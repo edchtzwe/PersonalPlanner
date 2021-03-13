@@ -41,16 +41,18 @@ class EventTest extends WebTestCase
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
         // test create event
-        $ccObj = $this->createEventHelper($client, $crawler);
-        $client = $ccObj["CLIENT"];
+        $ccObj   = $this->createEventHelper($client, $crawler);
+        $client  = $ccObj["CLIENT"];
         $crawler = $ccObj["CRAWLER"];
         $this->assertStringContainsString("Unit Test title", $client->getResponse()->getContent());
 
+        $eventId = $crawler->filter('input[id="event_id"]')->attr('value');
+
         // test delete event
-        $ccObj = $this->deleteEventHelper($client, $crawler);
-        $client = $ccObj["CLIENT"];
+        $ccObj   = $this->deleteEventHelper($client, $crawler);
+        $client  = $ccObj["CLIENT"];
         $crawler = $ccObj["CRAWLER"];
-        $this->assertStringContainsString("Deleted Event with ID", $client->getResponse()->getContent());
+        $this->assertStringContainsString("ID : ".$eventId, $client->getResponse()->getContent());
     }
 
     public function createEventHelper($client, $crawler)
@@ -74,17 +76,9 @@ class EventTest extends WebTestCase
 
     public function deleteEventHelper($client, $crawler)
     {
-        $link = $crawler->filter('a[id="delete_event"]')->attr('href');
+        $link    = $crawler->filter('a[id="delete_event"]')->attr('href');
         $crawler = $client->request('GET', $link);
 
         return array("CLIENT" => $client, "CRAWLER" => $crawler);
-    }
-
-    public function ViewEvent()
-    {
-        $client = static::createClient();
-
-        $crawler = $client->request("GET", "/event/21");
-        $this->assertTrue($client->getResponse()->isSuccessful());
     }
 }

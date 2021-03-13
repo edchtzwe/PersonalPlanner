@@ -27,12 +27,12 @@ class EventController extends AbstractController
     public function castEventObjToArray($event)
     {
         $eventObjArr = array(
-            "Title" => $event->getTitle(),
+            "Title"       => $event->getTitle(),
             "Description" => $event->getDescription(),
-            "Start" => $event->getStartTime()->format('Y-m-d'),
-            "End" => $event->getEndTime()->format('Y-m-d'),
-            "Location" => $event->getLocation(),
-            "Priority" => $event->getPriority(),
+            "Start"       => $event->getStartTime()->format('Y-m-d'),
+            "End"         => $event->getEndTime()->format('Y-m-d'),
+            "Location"    => $event->getLocation(),
+            "Priority"    => $event->getPriority(),
         );
         return $eventObjArr;
     }
@@ -78,7 +78,7 @@ class EventController extends AbstractController
     public function readAction($eventId)
     {
         $repository = $this->getRepository();
-        $event = $repository->find($eventId);
+        $event      = $repository->find($eventId);
 
         return $event;
     }
@@ -86,14 +86,14 @@ class EventController extends AbstractController
     public function getAllAction()
     {
         $repository = $this->getRepository();
-        $allEvents = $repository->findAll();
+        $allEvents  = $repository->findAll();
     }
 
     // Update
     public function updateAction($eventId)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $event = $this->readAction($eventId);
+        $event         = $this->readAction($eventId);
 
         if ($this->findOrError($event)) {
             return new Response("Event with title : ".$event->getTitle()." found.");
@@ -109,7 +109,8 @@ class EventController extends AbstractController
     public function deleteAction($eventId)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $event = $this->readAction($eventId);
+        $event         = $this->readAction($eventId);
+
         $entityManager->remove($event);
         $entityManager->flush();
     }
@@ -130,15 +131,15 @@ class EventController extends AbstractController
     public function createNewEventAction(Request $request)
     {
         $event = new Event();
-        $form = $this->createForm(EventType::class, $event);
+        $form  = $this->createForm(EventType::class, $event);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // this line is not really needed as the form auto-updates the entity object
-            $event = $form->getData();
-
+            $event    = $form->getData();
             $newEvent = $this->createAction($event);
+
             return $this->redirectToRoute("view_event", array("id" => $newEvent->getId()));
         }
 
@@ -152,8 +153,9 @@ class EventController extends AbstractController
      */
     public function viewEventAction($id)
     {
-        $event = $this->readAction($id);
+        $event       = $this->readAction($id);
         $eventObjArr = $this->castEventObjToArray($event);
+
         return $this->render('event/view_event.html.twig', [
             'event'     => $eventObjArr,
             "event_obj" => $event,
@@ -189,9 +191,8 @@ class EventController extends AbstractController
         $this->deleteAction($id);
 
         $this->addFlash(
-           "id",
-           $id
-          );
+            "deleted_event_id", $id
+        );
 
         return $this->redirectToRoute("home");
     }
@@ -199,6 +200,7 @@ class EventController extends AbstractController
     public function eventAsJsonAction($id): Response
     {
         $record = false;
+
         return $this->json(["key" => "value"]);
     }
 }
