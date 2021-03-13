@@ -5,12 +5,3 @@
 #    path: /
 #    defaults: { _controller: 'App\Controller\DefaultController::index' }
 
-home:
-    path:   /
-    defaults:  { _controller: 'App\Controller\EventController::indexAction' }
-
-edit:
-    path:   /event/edit/{id}
-    defaults:  { _controller: 'App\Controller\EventController::indexAction' }
-    requirements:
-        id: '\d+'

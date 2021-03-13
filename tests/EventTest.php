@@ -46,7 +46,11 @@ class EventTest extends WebTestCase
         $crawler = $ccObj["CRAWLER"];
         $this->assertStringContainsString("Unit Test title", $client->getResponse()->getContent());
 
-        // test edit event
+        // test delete event
+        $ccObj = $this->deleteEventHelper($client, $crawler);
+        $client = $ccObj["CLIENT"];
+        $crawler = $ccObj["CRAWLER"];
+        $this->assertStringContainsString("Deleted Event with ID", $client->getResponse()->getContent());
     }
 
     public function createEventHelper($client, $crawler)
@@ -68,7 +72,15 @@ class EventTest extends WebTestCase
         return array("CLIENT" => $client, "CRAWLER" => $crawler);
     }
 
-    public function testViewEvent()
+    public function deleteEventHelper($client, $crawler)
+    {
+        $link = $crawler->filter('a[id="delete_event"]')->attr('href');
+        $crawler = $client->request('GET', $link);
+
+        return array("CLIENT" => $client, "CRAWLER" => $crawler);
+    }
+
+    public function ViewEvent()
     {
         $client = static::createClient();
 

@@ -33,4 +33,11 @@
         </div>
     </div>
 </div>
+
+<div class="example-wrapper" style="margin-top: 10px;">
+    <input type="hidden" id="event_id" name="event_id" value="{{ event_obj.id }}" \>
+    <a id="delete_event" name="delete_event" href="{{ path('delete_event', {'id': event_obj.id}) }}">
+        <input type="button" value="Delete" \>
+    </a>
+</div>
 {% endblock %}

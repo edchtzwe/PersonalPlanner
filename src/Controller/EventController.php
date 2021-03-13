@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use App\Entity\Event;
 use App\Form\EventType;
@@ -113,7 +114,9 @@ class EventController extends AbstractController
         $entityManager->flush();
     }
 
-    // see app/config/routes.yaml
+    /**
+    * @Route("/", name="home")
+    */
     public function indexAction(): Response
     {
         return $this->render('event/index.html.twig', [
@@ -152,7 +155,8 @@ class EventController extends AbstractController
         $event = $this->readAction($id);
         $eventObjArr = $this->castEventObjToArray($event);
         return $this->render('event/view_event.html.twig', [
-            'event' => $eventObjArr,
+            'event'     => $eventObjArr,
+            "event_obj" => $event,
         ]);
     }
 
@@ -175,6 +179,21 @@ class EventController extends AbstractController
         }
 
         return $this->redirectToRoute("/event/"+$id);
+    }
+
+    /**
+    * @Route("/event/delete/{id}", name="delete_event", requirements={"id" = "\d+"})
+    */
+    public function deleteEventAction($id)
+    {
+        $this->deleteAction($id);
+
+        $this->addFlash(
+           "id",
+           $id
+          );
+
+        return $this->redirectToRoute("home");
     }
 
     public function eventAsJsonAction($id): Response
