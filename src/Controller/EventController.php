@@ -90,19 +90,15 @@ class EventController extends AbstractController
     }
 
     // Update
-    public function updateAction($eventId)
+    public function updateAction($event)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        $event         = $this->readAction($eventId);
 
-        if ($this->findOrError($event)) {
-            return new Response("Event with title : ".$event->getTitle()." found.");
-        }
+        $entityManager->persist($event);
 
-        $event->setTitle("Updated Title");
         $entityManager->flush();
 
-        return $this->redirectToRoute("/");
+        return $event;
     }
 
     // Delete
@@ -173,12 +169,28 @@ class EventController extends AbstractController
         ]);
     }
 
-    public function editEventAction($id): Response
+    /**
+    * @Route("/event/edit/{id}", name="edit_event", requirements={"id" = "\d+"})
+    */
+    public function editEventAction(Request $request, $id): Response
     {
-        $record = false;
-        if (!$record || !$id) {
-            throw $this->createNotFoundException("Record not found");
+        $event = $this->readAction($id);
+        
+        $form  = $this->createForm(EventType::class, $event);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // this line is not really needed as the form auto-updates the entity object
+            $event    = $form->getData();
+            $newEvent = $this->createAction($event);
+
+            return $this->redirectToRoute("view_event", array("id" => $newEvent->getId()));
         }
+
+        return $this->render("event/add_event.html.twig", [
+            "form" => $form->createView(),
+        ]);
 
         return $this->redirectToRoute("/event/"+$id);
     }
